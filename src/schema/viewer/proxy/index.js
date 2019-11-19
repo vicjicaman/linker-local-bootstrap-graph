@@ -9,6 +9,7 @@ const schema = [
   type LocalProxyMutations {
     restart: LocalProxy!
     reload: LocalProxy!
+    stop: LocalProxy!
   }
 
 `
@@ -17,7 +18,9 @@ const schema = [
 const resolvers = {
   LocalProxy: {},
   LocalProxyMutations: {
-    restart: async (viewer, args, cxt) => await ProxyModel.restart(cxt)
+    restart: async (viewer, args, cxt) => await ProxyModel.restart(cxt),
+    reload: async (viewer, args, cxt) => await ProxyModel.reload(cxt),
+    stop: async (viewer, args, cxt) => await ProxyModel.stop(cxt)
   }
 };
 

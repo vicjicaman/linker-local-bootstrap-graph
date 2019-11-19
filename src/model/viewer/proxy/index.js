@@ -11,12 +11,54 @@ export const restart = cxt => {
   const { workspace } = cxt;
   const folder = path.join(workspace, "proxy");
 
+  cxt.logger.debug("proxy.stop");
+  stop(cxt);
+
+  setTimeout(function() {
+    cxt.logger.debug("proxy.start");
+    start(cxt);
+  }, 2500);
+
+  return {
+    status: "-"
+  };
+};
+
+export const start = cxt => {
+  const { workspace } = cxt;
+  const folder = path.join(workspace, "proxy");
+
+  execSync(
+    `docker-compose -p repoflow-linker-proxy up --remove-orphans --detach`,
+    {
+      cwd: folder
+    }
+  );
+
+  return {
+    status: "-"
+  };
+};
+
+export const stop = cxt => {
+  const { workspace } = cxt;
+  const folder = path.join(workspace, "proxy");
+
   execSync(`docker-compose -p repoflow-linker-proxy stop`, {
     cwd: folder
   });
 
+  return {
+    status: "-"
+  };
+};
+
+export const reload = cxt => {
+  const { workspace } = cxt;
+  const folder = path.join(workspace, "proxy");
+
   execSync(
-    `docker-compose -p repoflow-envs-control up --remove-orphans --detach`,
+    `docker-compose -p repoflow-linker-proxy exec proxy nginx -s reload`,
     {
       cwd: folder
     }
