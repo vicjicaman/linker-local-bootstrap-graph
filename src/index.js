@@ -18,6 +18,7 @@ const logger = Logger.create({
   env: ENV_MODE
 });
 const cxt = {
+  workspace: LOCAL_WORKSPACE,
   host: {
     server: {
       host: "linker.repoflow.com"
