@@ -16,14 +16,16 @@ export const get = async (host, cxt) => {
 };
 
 export const add = async ({ host, ip }, cxt) => {
-  const hostsContent = fs.readFileSync("/etc/hosts");
-
   const current = await get(host);
-  if (current) {
+
+  cxt.logger.debug("hosts.add.compare", { current, ip });
+
+  if (current && current === ip) {
     return true;
   }
 
   try {
+    await remove({ host }, cxt);
     fs.appendFileSync("/etc/hosts", `${ip} ${host} #repoflow-linker-entry\n`);
     return true;
   } catch (e) {
@@ -32,17 +34,18 @@ export const add = async ({ host, ip }, cxt) => {
   }
 };
 
-export const remove = async ({ host, ip }, cxt) => {
-  const hostsContent = fs.readFileSync("/etc/hosts");
+export const remove = async ({ host }, cxt) => {
+  const hostsContent = fs.readFileSync("/etc/hosts").toString();
 
   const lines = hostsContent.split("\n");
   for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const values = line.trim().split(/\s+/);
     if (values[1] === host) {
       lines.splice(i, 1);
     }
   }
 
-  fs.writeSyncFile("/etc/hosts", lines.join("\n"));
+  fs.writeFileSync("/etc/hosts", lines.join("\n"));
   return null;
 };

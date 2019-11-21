@@ -1,7 +1,7 @@
 {
-  "name": "@nebulario/linker-local-boostrap-graph",
+  "name": "@nebulario/linker-local-bootstrap-graph",
   "version": "1.70.5-master",
-  "description": "GraphQL for local boostrap",
+  "description": "GraphQL for local bootstrap",
   "main": "dist/index.js",
   "repository": "github.com:vicjicaman/linker-auth-graph.git",
   "author": "Victor Jimenez <vic@repoflow.com>",
