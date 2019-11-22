@@ -58,7 +58,7 @@ export const reload = cxt => {
   const folder = path.join(workspace, "proxy");
 
   execSync(
-    `docker-compose -p repoflow-linker-proxy exec proxy nginx -s reload`,
+    `COMPOSE_INTERACTIVE_NO_CLI=1 docker-compose -p repoflow-linker-proxy exec -T proxy nginx -s reload`,
     {
       cwd: folder
     }
