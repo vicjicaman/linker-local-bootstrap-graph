@@ -7,8 +7,8 @@ export const OPERATION_INDEX = {};
 export const keepWhile = async (tag, fn, cxt) => {
   let i = 0;
   while (fn()) {
-    await Utils.Process.wait(2500);
-    if (i++ > 2500) {
+    await Utils.Process.wait(1);
+    if (i++ > 10000) {
       i = 0;
       cxt.logger.debug(tag, {});
     }
