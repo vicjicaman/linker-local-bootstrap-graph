@@ -150,3 +150,13 @@ const frame = async (tunnelid, mode, args, cxt) => {
 export const stop = async (tunnel, cxt) => {
   return await OperationUtils.stop(tunnel, {}, cxt);
 };
+
+export const forceStop = async (tunnelid, cxt) => {
+  const op = await OperationUtils.get(tunnelid, cxt);
+  if (op) {
+    cxt.logger.debug("tunnel.force.stop", { tunnelid });
+    return await OperationUtils.stop(op, {}, cxt);
+  }
+  cxt.logger.debug("tunnel.force.none", { tunnelid });
+  return null;
+};

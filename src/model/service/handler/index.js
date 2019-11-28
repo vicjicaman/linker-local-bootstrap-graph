@@ -8,6 +8,36 @@ import * as Utils from "@nebulario/linker-utils";
 const networkInspect = async (networkid, cxt) =>
   JSON.parse(execSync(`docker network inspect ${networkid}`));
 
+const getServiceNetwork = async (networkid, service, cxt) => {
+  let networkInfo = null;
+
+  const inspect = await networkInspect(networkid, cxt);
+
+  while (networkInfo === null) {
+    const inspectInitial = await networkInspect(networkid, cxt);
+
+    networkInfo =
+      _.find(inspect[0].Containers, c => c.Name.indexOf(service) !== -1) ||
+      null;
+
+    cxt.logger.debug("instance.network.service.raw", {
+      container: networkInfo
+    });
+
+    await Utils.Process.wait(500);
+  }
+
+  const info = {
+    ip: networkInfo.IPv4Address.split("/")[0]
+  };
+
+  cxt.logger.debug("instance.network.service", {
+    service,
+    info
+  });
+  return info;
+};
+
 export const start = async (instance, cxt) => {
   const {
     instanceid,
@@ -50,27 +80,9 @@ export const start = async (instance, cxt) => {
   }).toString();
   cxt.logger.debug("instance.compose");
 
-  //Utils
-  const inspectInitial = await networkInspect(networkid, cxt);
+  instance.network.graph = await getServiceNetwork(networkid, "graph", cxt);
 
-  const graphNetworkInfo = _.find(
-    inspect[0].Containers,
-    c => c.Name.indexOf("graph") !== -1
-  );
-  const webNetworkInfo = _.find(
-    inspect[0].Containers,
-    c => c.Name.indexOf("web") !== -1
-  );
-
-  cxt.logger.debug("instance.network.graph", { container: graphNetworkInfo });
-  instance.network.graph = {
-    ip: graphNetworkInfo.IPv4Address.split("/")[0]
-  };
-
-  cxt.logger.debug("instance.network.web", { container: webNetworkInfo });
-  instance.network.web = {
-    ip: webNetworkInfo.IPv4Address.split("/")[0]
-  };
+  instance.network.web = await getServiceNetwork(networkid, "web", cxt);
 
   return {};
 };

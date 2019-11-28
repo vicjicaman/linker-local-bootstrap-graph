@@ -14,10 +14,14 @@ export const list = async (args, cxt) => {
 
 export const start = async ({ tunnelid, source, cluster, remote }, cxt) => {
   if (TUNNELS_DATA[tunnelid]) {
+    cxt.logger.debug("bootstrap.tunnel.stop.existing", { tunnelid });
     await stop(TUNNELS_DATA[tunnelid], cxt);
     delete TUNNELS_DATA[tunnelid];
   }
 
+  await TunnelUtils.forceStop(tunnelid, cxt);
+
+  cxt.logger.debug("bootstrap.tunnel", { tunnelid, source, cluster });
   const op = await TunnelUtils.remote(
     tunnelid,
     [

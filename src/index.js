@@ -19,6 +19,10 @@ const LOCAL_WORKSPACE = path.join(process.cwd(), "workspace");
 const LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT =
   process.env["LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT"];
 
+const LOCAL_VERSION_GRAPH = process.env["LOCAL_VERSION_GRAPH"];
+const LOCAL_VERSION_WEB = process.env["LOCAL_VERSION_WEB"];
+const LOCAL_VERSION_WORKER = process.env["LOCAL_VERSION_WORKER"];
+
 if (!fs.existsSync(LOCAL_WORKSPACE)) {
   fs.mkdirSync(LOCAL_WORKSPACE);
 }
@@ -37,11 +41,11 @@ const cxt = {
   },
   services: {
     bootstrap: { port: LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT },
-    web: { port: 17007, version: "local-handler-v1" },
-    graph: { port: 17006, version: "local-handler-v1" },
+    web: { port: 17007, version: LOCAL_VERSION_WEB },
+    graph: { port: 17006, version: LOCAL_VERSION_GRAPH },
     remote: { host: REMOTE_SERVICE_HOST },
     worker: {
-      version: "local-handler-v1"
+      version: LOCAL_VERSION_WORKER
     }
   },
   dev: {
