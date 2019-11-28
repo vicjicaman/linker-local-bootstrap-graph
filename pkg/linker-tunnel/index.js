@@ -155,7 +155,8 @@ export const forceStop = async (tunnelid, cxt) => {
   const op = await OperationUtils.get(tunnelid, cxt);
   if (op) {
     cxt.logger.debug("tunnel.force.stop", { tunnelid });
-    return await OperationUtils.stop(op, {}, cxt);
+    await OperationUtils.stop(op, {}, cxt);
+    await Utils.Process.wait(1000);
   }
   cxt.logger.debug("tunnel.force.none", { tunnelid });
   return null;
