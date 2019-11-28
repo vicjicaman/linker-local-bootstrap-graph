@@ -26,7 +26,10 @@ export const start = async ({ tunnelid, source, cluster, remote }, cxt) => {
         dest: cluster // { host: "localhost", port: outlet.clusterPort }
       }
     ],
-    remote,
+    {
+      ...remote,
+      key: remote.key.replace(cxt.paths.inner.workspace, cxt.workspace)
+    },
     cxt
   );
 
