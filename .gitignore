@@ -1,0 +1,17 @@
+# dependencies
+**/node_modules
+
+# production
+**/dist
+**/runtime
+**/__generated__
+**/logs
+
+# misc
+.env
+
+yarn-debug.log*
+yarn-error.log*
+
+RUNTIME_SIGNAL
+**/tmp
