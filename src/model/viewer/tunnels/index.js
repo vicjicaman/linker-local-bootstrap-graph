@@ -1,5 +1,6 @@
 import * as TunnelUtils from "PKG/linker-tunnel";
 import * as Utils from "@nebulario/linker-utils";
+import { execSync } from "child_process";
 
 const TUNNELS_DATA = {};
 
@@ -20,6 +21,10 @@ export const start = async ({ tunnelid, source, cluster, remote }, cxt) => {
   }
 
   await TunnelUtils.forceStop(tunnelid, cxt);
+
+  execSync(
+    `ssh-keygen -f ~/.ssh/known_hosts -R "[${remote.host}]:${remote.port}"`
+  );
 
   cxt.logger.debug("bootstrap.tunnel", { tunnelid, source, cluster });
   const op = await TunnelUtils.remote(

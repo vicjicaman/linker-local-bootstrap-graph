@@ -7,11 +7,12 @@ export const compose = ({ network: { networkid, localhost } }, cxt) => {
       web: { port: localWebPort, version: webVersion },
       graph: { port: localGraphPort, version: graphVersion },
       remote: { host: remoteHost },
-      worker: { version: workerVersion }
+      worker: { mode: workerMode, version: workerVersion }
     },
     dev
   } = cxt;
   const localWorkspace = cxt.paths.inner.workspace;
+  const devFolderEnv = `- DEV_FOLDER=${dev.folder}`;
 
   return `version: '3'
 
@@ -24,6 +25,8 @@ services:
       - LOCAL_HANDLER_WEB_PORT=${localWebPort}
       - LOCAL_HANDLER_GRAPH_PORT=${localGraphPort}
       - LOCAL_WORKSPACE=${localWorkspace}
+      - ENV_MODE_WORKER=${workerMode}
+      ${mode === "development" ? devFolderEnv : ""}
     volumes:
       - ${workspace}:${localWorkspace}
       ${mode === "development" && dev ? `- ${dev.folder}/modules:/env` : ""}
@@ -50,6 +53,7 @@ services:
       - BOOTSTRAP_WORKSPACE=${cxt.workspace}
       - BOOTSTRAP_GRAPH_URL=http://${localhost}:${localBootstrapPort}/graphql
       - REMOTE_GRAPH_URL=https://${remoteHost}/backend/graphql
+      ${mode === "development" ? devFolderEnv : ""}
     volumes:
       - ${workspace}:${localWorkspace}
       ${mode === "development" && dev ? `- ${dev.folder}/modules:/env` : ""}
