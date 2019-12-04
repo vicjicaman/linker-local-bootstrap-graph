@@ -12,6 +12,7 @@ import * as Logger from "@nebulario/linker-logger";
 import * as Service from "Model/service";
 
 const ENV_MODE = process.env["ENV_MODE"];
+const ENV_MODE_WORKER = process.env["ENV_MODE_WORKER"];
 const REMOTE_SERVICE_HOST = process.env["REMOTE_SERVICE_HOST"];
 
 const INNER_WORKSPACE = "/workspace";
@@ -22,6 +23,7 @@ const LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT =
 const LOCAL_VERSION_GRAPH = process.env["LOCAL_VERSION_GRAPH"];
 const LOCAL_VERSION_WEB = process.env["LOCAL_VERSION_WEB"];
 const LOCAL_VERSION_WORKER = process.env["LOCAL_VERSION_WORKER"];
+const DEV_FOLDER = process.env["DEV_FOLDER"];
 
 if (!fs.existsSync(LOCAL_WORKSPACE)) {
   fs.mkdirSync(LOCAL_WORKSPACE);
@@ -45,12 +47,12 @@ const cxt = {
     graph: { port: 17006, version: LOCAL_VERSION_GRAPH },
     remote: { host: REMOTE_SERVICE_HOST },
     worker: {
+      mode: ENV_MODE_WORKER,
       version: LOCAL_VERSION_WORKER
     }
   },
   dev: {
-    folder:
-      "/home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/local-handler-v1"
+    folder: DEV_FOLDER
   },
   logger,
   instance: null
