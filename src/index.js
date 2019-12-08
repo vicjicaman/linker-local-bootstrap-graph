@@ -19,6 +19,8 @@ const INNER_WORKSPACE = "/workspace";
 const LOCAL_WORKSPACE = path.join(process.cwd(), "workspace");
 const LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT =
   process.env["LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT"];
+const LOCAL_GRAPH_SERVICE_PORT = process.env["LOCAL_GRAPH_SERVICE_PORT"];
+const LOCAL_WEB_SERVICE_PORT = process.env["LOCAL_WEB_SERVICE_PORT"];
 
 const LOCAL_VERSION_GRAPH = process.env["LOCAL_VERSION_GRAPH"];
 const LOCAL_VERSION_WEB = process.env["LOCAL_VERSION_WEB"];
@@ -43,8 +45,8 @@ const cxt = {
   },
   services: {
     bootstrap: { port: LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT },
-    web: { port: 17007, version: LOCAL_VERSION_WEB },
-    graph: { port: 17006, version: LOCAL_VERSION_GRAPH },
+    web: { port: LOCAL_WEB_SERVICE_PORT, version: LOCAL_VERSION_WEB },
+    graph: { port: LOCAL_GRAPH_SERVICE_PORT, version: LOCAL_VERSION_GRAPH },
     remote: { host: REMOTE_SERVICE_HOST },
     worker: {
       mode: ENV_MODE_WORKER,
