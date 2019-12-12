@@ -4,37 +4,40 @@ services:
   web:
     image: repoflow/linker-local-handler-web-container:undefined
     environment:
-      - NODE_ENV=development
-      - ENV_MODE=development
-      - LOCAL_HANDLER_WEB_PORT=17007
-      - LOCAL_HANDLER_GRAPH_PORT=17006
+      - NODE_ENV=undefined
+      - ENV_MODE=undefined
+      - LOCAL_HANDLER_WEB_PORT=undefined
+      - LOCAL_HANDLER_GRAPH_PORT=undefined
       - LOCAL_WORKSPACE=/workspace
+      - ENV_MODE_WORKER=undefined
+      
     volumes:
-      - /home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/local-handler-v1/modules/linker-local-bootstrap-graph/workspace:/workspace
-      - /home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/local-handler-v1/modules:/env
+      - /home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/deployment-stateful-pods/modules/linker-local-bootstrap-graph/workspace:/workspace
+      
 
-    command: "node_modules/nodemon/bin/nodemon ./dist/index.js"
+    
     networks:
       - repoflow-linker-network-41096974-222a-448e-9ed7-b3dbd5bc6174
 
   graph:
     image: repoflow/linker-local-handler-graph-container:undefined
     environment:
-      - LOCALHOST=192.168.192.1
-      - NODE_ENV=development
-      - ENV_MODE=development
-      - LOCAL_HANDLER_WEB_PORT=17007
-      - LOCAL_HANDLER_GRAPH_PORT=17006
+      - LOCALHOST=172.18.0.1
+      - NODE_ENV=undefined
+      - ENV_MODE=undefined
+      - LOCAL_HANDLER_WEB_PORT=undefined
+      - LOCAL_HANDLER_GRAPH_PORT=undefined
       - LOCAL_WORKSPACE=/workspace
       - LOCAL_NETWORK=repoflow-linker-network-41096974-222a-448e-9ed7-b3dbd5bc6174
       - LOCAL_WORKER_VERSION=undefined
-      - BOOTSTRAP_WORKSPACE=/home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/local-handler-v1/modules/linker-local-bootstrap-graph/workspace
-      - BOOTSTRAP_GRAPH_URL=http://192.168.192.1:undefined/graphql
+      - BOOTSTRAP_WORKSPACE=/home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/deployment-stateful-pods/modules/linker-local-bootstrap-graph/workspace
+      - BOOTSTRAP_GRAPH_URL=http://172.18.0.1:undefined/graphql
       - REMOTE_GRAPH_URL=https://undefined/backend/graphql
+      
     volumes:
-      - /home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/local-handler-v1/modules/linker-local-bootstrap-graph/workspace:/workspace
-      - /home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/local-handler-v1/modules:/env
-    command: "node_modules/nodemon/bin/nodemon ./dist/index.js"
+      - /home/victor/repoflow/app/data/dev/workspace/workspaces/linker.repoflow.com/instances/deployment-stateful-pods/modules/linker-local-bootstrap-graph/workspace:/workspace
+      
+    
     sysctls:
       net.ipv4.ip_unprivileged_port_start: 0
     networks:
