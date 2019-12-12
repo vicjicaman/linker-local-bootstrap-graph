@@ -44,7 +44,7 @@ const resolvers = {
   ViewerMutations: {
     tunnels: viewer => viewer,
     hosts: viewer => viewer,
-    proxy: viewer => viewer,
+    proxy: async (viewer, args, cxt) => await ProxyModel.get(cxt),
     workers: viewer => viewer
   }
 };
