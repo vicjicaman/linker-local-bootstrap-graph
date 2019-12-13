@@ -27,7 +27,7 @@ export const start = async ({ tunnelid, source, cluster, remote }, cxt) => {
   );
 
   cxt.logger.debug("bootstrap.tunnel", { tunnelid, source, cluster });
-  const op = await TunnelUtils.remote(
+  const tunnel = await TunnelUtils.remote(
     tunnelid,
     [
       {
@@ -42,7 +42,7 @@ export const start = async ({ tunnelid, source, cluster, remote }, cxt) => {
     cxt
   );
 
-  TUNNELS_DATA[tunnelid] = { id: tunnelid, tunnelid, operation: op };
+  TUNNELS_DATA[tunnelid] = tunnel;
   return TUNNELS_DATA[tunnelid];
 };
 
@@ -50,7 +50,7 @@ export const stop = async (tunnel, cxt) => {
   if (tunnel) {
     const { tunnelid } = tunnel;
     cxt.logger.debug("tunnel.stop", { tunnelid: tunnelid });
-    await TunnelUtils.stop(tunnel.operation, cxt);
+    await TunnelUtils.stop(tunnel, cxt);
     delete TUNNELS_DATA[tunnel.tunnelid];
     return true;
   }

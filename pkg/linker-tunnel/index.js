@@ -71,7 +71,7 @@ export const remote = async (tunnelid, fwds, opts, cxt) => {
 
 const frame = async (tunnelid, mode, args, cxt) => {
   const op = await OperationUtils.start(
-    tunnelid,
+    tunnelid + "_op",
     {
       start: async (operation, cxt) => {
         cxt.logger.debug("tunnel.start", {
@@ -121,21 +121,22 @@ const frame = async (tunnelid, mode, args, cxt) => {
         });
 
         await pkill;
-        await Utils.Process.wait(1000);
+        await Utils.Process.wait(500);
       },
       retry: async (operation, error, i, cxt) => {
-        if (error !== null && i < 5) {
+        cxt.logger.debug("tunnel.retry", {
+          error: error ? error.toString() : "NO_ERROR",
+          tunnelid,
+          attempt: i,
+          command: operation.data.command
+        });
+
+        if (operation.data.command !== "stop" && i < 5) {
           await Utils.Process.wait(2500);
-          cxt.logger.debug("tunnel.recover", {
-            tunnelid,
-            attempt: i
-          });
+          cxt.logger.debug("tunnel.recover");
           return true;
         } else {
-          cxt.logger.debug("tunnel.giveup", {
-            tunnelid,
-            attempt: i
-          });
+          cxt.logger.debug("tunnel.giveup");
           return false;
         }
       }
@@ -144,15 +145,16 @@ const frame = async (tunnelid, mode, args, cxt) => {
     cxt
   );
 
-  return op;
+  return { id: tunnelid, tunnelid, operation: op };
 };
 
 export const stop = async (tunnel, cxt) => {
-  return await OperationUtils.stop(tunnel, {}, cxt);
+  tunnel.operation.data.command = "stop";
+  return await OperationUtils.stop(tunnel.operation, {}, cxt);
 };
 
 export const forceStop = async (tunnelid, cxt) => {
-  const op = await OperationUtils.get(tunnelid, cxt);
+  const op = await OperationUtils.get(tunnelid + "_op", cxt);
   if (op) {
     cxt.logger.debug("tunnel.force.stop", { tunnelid });
     await OperationUtils.stop(op, {}, cxt);
