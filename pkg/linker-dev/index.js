@@ -4,7 +4,7 @@ import * as JsonUtils from "PKG/linker-json";
 
 const DEV_CONFIG_FILE = "dev.config.json";
 
-const config = () => {
+const config = cxt => {
   let config = null;
   if (fs.existsSync(DEV_CONFIG_FILE)) {
     config = JsonUtils.load(DEV_CONFIG_FILE);
@@ -26,7 +26,7 @@ const config = () => {
 };
 
 export const init = cxt => {
-  cxt.dev = config();
+  cxt.dev = config(cxt);
 };
 
 export const get = (ptk, cxt) => {
