@@ -15,3 +15,5 @@ yarn-error.log*
 
 RUNTIME_SIGNAL
 **/tmp
+
+**/workspace

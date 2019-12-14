@@ -3,6 +3,8 @@ import * as ProxyModel from "Model/viewer/proxy";
 const schema = [
   `
   type LocalProxy {
+    id: String!
+    proxyid: String!
     status: String!
   }
 
@@ -18,9 +20,9 @@ const schema = [
 const resolvers = {
   LocalProxy: {},
   LocalProxyMutations: {
-    restart: async (viewer, args, cxt) => await ProxyModel.restart(cxt),
-    reload: async (viewer, args, cxt) => await ProxyModel.reload(cxt),
-    stop: async (viewer, args, cxt) => await ProxyModel.stop(cxt)
+    restart: async (proxy, args, cxt) => await ProxyModel.restart(proxy, cxt),
+    reload: async (proxy, args, cxt) => await ProxyModel.reload(proxy, cxt),
+    stop: async (proxy, args, cxt) => await ProxyModel.stop(proxy, cxt)
   }
 };
 

@@ -6,19 +6,22 @@ const graphqlHTTP = require("express-graphql");
 const { makeExecutableSchema } = require("graphql-tools");
 const { schema: rootSchema, resolvers: rootResolvers } = require("./schema");
 
+import * as DevConfig from "PKG/linker-dev";
+
 import * as Utils from "@nebulario/linker-utils";
 import * as Logger from "@nebulario/linker-logger";
 
 import * as Service from "Model/service";
 
 const ENV_MODE = process.env["ENV_MODE"];
-const ENV_MODE_WORKER = process.env["ENV_MODE_WORKER"];
 const REMOTE_SERVICE_HOST = process.env["REMOTE_SERVICE_HOST"];
 
 const INNER_WORKSPACE = "/workspace";
 const LOCAL_WORKSPACE = path.join(process.cwd(), "workspace");
 const LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT =
   process.env["LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT"];
+const LOCAL_GRAPH_SERVICE_PORT = process.env["LOCAL_GRAPH_SERVICE_PORT"];
+const LOCAL_WEB_SERVICE_PORT = process.env["LOCAL_WEB_SERVICE_PORT"];
 
 const LOCAL_VERSION_GRAPH = process.env["LOCAL_VERSION_GRAPH"];
 const LOCAL_VERSION_WEB = process.env["LOCAL_VERSION_WEB"];
@@ -29,10 +32,6 @@ if (!fs.existsSync(LOCAL_WORKSPACE)) {
   fs.mkdirSync(LOCAL_WORKSPACE);
 }
 
-const logger = Logger.create({
-  path: path.join(LOCAL_WORKSPACE, "logs", "bootstrap"),
-  env: ENV_MODE
-});
 const cxt = {
   workspace: LOCAL_WORKSPACE,
   mode: ENV_MODE,
@@ -43,20 +42,27 @@ const cxt = {
   },
   services: {
     bootstrap: { port: LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT },
-    web: { port: 17007, version: LOCAL_VERSION_WEB },
-    graph: { port: 17006, version: LOCAL_VERSION_GRAPH },
+    web: { port: LOCAL_WEB_SERVICE_PORT, version: LOCAL_VERSION_WEB },
+    graph: { port: LOCAL_GRAPH_SERVICE_PORT, version: LOCAL_VERSION_GRAPH },
     remote: { host: REMOTE_SERVICE_HOST },
     worker: {
-      mode: ENV_MODE_WORKER,
       version: LOCAL_VERSION_WORKER
     }
   },
-  dev: {
-    folder: DEV_FOLDER
-  },
-  logger,
+  dev: null,
+  logger: null,
   instance: null
 };
+
+cxt.logger = Logger.create({
+  path: path.join(LOCAL_WORKSPACE, "logs", "bootstrap"),
+  env: ENV_MODE
+});
+
+DevConfig.init(cxt);
+if (DevConfig.get("remote.host", cxt)) {
+  cxt.services.remote.host = DevConfig.get("remote.host", cxt);
+}
 
 (async () => {
   cxt.instance = await Service.start(cxt);
