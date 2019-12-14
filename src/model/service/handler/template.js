@@ -1,3 +1,5 @@
+import * as DevConfig from "PKG/linker-dev";
+
 export const compose = ({ network: { networkid, localhost } }, cxt) => {
   const {
     workspace,
@@ -12,27 +14,32 @@ export const compose = ({ network: { networkid, localhost } }, cxt) => {
     dev
   } = cxt;
   const localWorkspace = cxt.paths.inner.workspace;
-  const devFolderEnv = `- DEV_FOLDER=${dev.folder}`;
+
+  const linkWeb = DevConfig.get("web.link", cxt);
+  const linkGraph = DevConfig.get("graph.link", cxt);
+  const devConfigEnv = `- DEV_CONFIG=${DevConfig.serialize(cxt)}`;
 
   return `version: '3'
 
 services:
   web:
-    image: repoflow/linker-local-handler-web-container:${webVersion}
+    image: repoflow/linker-local-handler-web-container:${DevConfig.get(
+      "web.version",
+      cxt
+    ) || webVersion}
     environment:
-      - NODE_ENV=${mode}
-      - ENV_MODE=${mode}
+      - NODE_ENV=${DevConfig.get("web.mode", cxt) || mode}
+      - ENV_MODE=${DevConfig.get("web.mode", cxt) || mode}
       - LOCAL_HANDLER_WEB_PORT=${localWebPort}
       - LOCAL_HANDLER_GRAPH_PORT=${localGraphPort}
       - LOCAL_WORKSPACE=${localWorkspace}
-      - ENV_MODE_WORKER=${workerMode}
-      ${mode === "development" ? devFolderEnv : ""}
+      ${linkWeb ? devConfigEnv : ""}
     volumes:
       - ${workspace}:${localWorkspace}
-      ${mode === "development" && dev ? `- ${dev.folder}/modules:/env` : ""}
+      ${linkWeb ? `- ${DevConfig.get("web.folder", cxt)}/modules:/env` : ""}
 
     ${
-      mode === "development"
+      linkWeb
         ? 'command: "node_modules/nodemon/bin/nodemon ./dist/index.js"'
         : ""
     }
@@ -40,11 +47,14 @@ services:
       - ${networkid}
 
   graph:
-    image: repoflow/linker-local-handler-graph-container:${graphVersion}
+    image: repoflow/linker-local-handler-graph-container:${DevConfig.get(
+      "graph.version",
+      cxt
+    ) || graphVersion}
     environment:
       - LOCALHOST=${localhost}
-      - NODE_ENV=${mode}
-      - ENV_MODE=${mode}
+      - NODE_ENV=${DevConfig.get("graph.mode", cxt) || mode}
+      - ENV_MODE=${DevConfig.get("graph.mode", cxt) || mode}
       - LOCAL_HANDLER_WEB_PORT=${localWebPort}
       - LOCAL_HANDLER_GRAPH_PORT=${localGraphPort}
       - LOCAL_WORKSPACE=${localWorkspace}
@@ -53,12 +63,12 @@ services:
       - BOOTSTRAP_WORKSPACE=${cxt.workspace}
       - BOOTSTRAP_GRAPH_URL=http://${localhost}:${localBootstrapPort}/graphql
       - REMOTE_GRAPH_URL=https://${remoteHost}/backend/graphql
-      ${mode === "development" ? devFolderEnv : ""}
+      ${linkGraph ? devConfigEnv : ""}
     volumes:
       - ${workspace}:${localWorkspace}
-      ${mode === "development" && dev ? `- ${dev.folder}/modules:/env` : ""}
+      ${linkGraph ? `- ${DevConfig.get("graph.folder", cxt)}/modules:/env` : ""}
     ${
-      mode === "development"
+      linkGraph
         ? 'command: "node_modules/nodemon/bin/nodemon ./dist/index.js"'
         : ""
     }

@@ -1,5 +1,7 @@
 src
 static
 webpack.*
+pkg
 .babelrc
 .env
+workspace
