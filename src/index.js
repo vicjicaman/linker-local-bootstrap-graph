@@ -106,10 +106,8 @@ cxt.logger.debug("context", {
   );
 
   console.log("-----------------------------------------------------------");
-  console.log("-----------------------------------------------------------");
   console.log("Open the dashboard on:");
   console.log(`http://${cxt.instance.network.web.ip}:${cxt.services.web.port}`);
-  console.log("-----------------------------------------------------------");
   console.log("-----------------------------------------------------------");
 
   app.listen(LOCAL_GRAPH_BOOTSTRAP_SERVICE_PORT, () => {
