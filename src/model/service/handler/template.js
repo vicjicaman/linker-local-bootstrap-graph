@@ -85,8 +85,3 @@ networks:
 
 `;
 };
-
-/*
-- LOCAL_HANDLER_GRAPH_EXTERNAL_URL=http://${localGraphHost}:${localGraphPort}/graphql
-- LOCAL_HANDLER_GRAPH_INTERNAL_URL=http://graph:${localGraphPort}/graphql
-*/

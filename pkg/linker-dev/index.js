@@ -6,14 +6,17 @@ const DEV_CONFIG_FILE = "dev.config.json";
 
 const config = cxt => {
   let config = null;
+
   if (fs.existsSync(DEV_CONFIG_FILE)) {
     config = JsonUtils.load(DEV_CONFIG_FILE);
   } else {
     try {
       const configEnv = process.env["DEV_CONFIG"];
-      config = JSON.parse(configEnv);
+      if (configEnv) {
+        config = JSON.parse(configEnv);
+      }
     } catch (e) {
-      cxt.logger.error("dev.config.error", { error: e.toString() });
+      console.log("dev.config.error:" + e.toString());
     }
   }
 
