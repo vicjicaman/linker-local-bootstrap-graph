@@ -1,6 +1,6 @@
 {
   "name": "@nebulario/linker-local-bootstrap-graph",
-  "version": "1.70.0-bootstrap-workspace-prod",
+  "version": "1.70.1-bootstrap-workspace-prod",
   "description": "GraphQL for local bootstrap",
   "main": "dist/index.js",
   "repository": "github.com:vicjicaman/linker-auth-graph.git",
